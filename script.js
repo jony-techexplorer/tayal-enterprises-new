@@ -44,42 +44,84 @@ window.addEventListener('scroll', () => {
 
 // Contact Form Handling
 const contactForm = document.getElementById('contactForm');
+const submitBtn = contactForm.querySelector('.submit-btn');
+const formMessage = document.getElementById('formMessage');
+
+// Check if form was submitted successfully (redirected back from FormSubmit)
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('submitted') === 'true') {
+    // Show success message
+    const name = urlParams.get('name') || 'there';
+    showFormMessage('success', `Thank you, ${name}! Your message has been received. We will contact you soon.`);
+    // Clean URL
+    const currentUrl = window.location.href.split('?')[0];
+    window.history.replaceState({}, document.title, currentUrl + '#contact');
+    // Reset form
+    contactForm.reset();
+}
+
+// Function to show form messages
+function showFormMessage(type, message) {
+    formMessage.textContent = message;
+    formMessage.className = 'form-message ' + type;
+    formMessage.style.display = 'block';
+    
+    // Scroll to message
+    formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    
+    // Hide after 5 seconds for success messages
+    if (type === 'success') {
+        setTimeout(() => {
+            formMessage.style.display = 'none';
+        }, 5000);
+    }
+}
 
 contactForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
     // Get form values
     const name = document.getElementById('name').value;
     const phone = document.getElementById('phone').value;
     const email = document.getElementById('email').value;
     const message = document.getElementById('message').value;
     
+    // Hide any previous messages
+    formMessage.style.display = 'none';
+    
     // Simple validation
     if (!name || !phone || !email || !message) {
-        alert('Please fill in all fields.');
+        e.preventDefault();
+        showFormMessage('error', 'Please fill in all fields.');
         return;
     }
     
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-        alert('Please enter a valid email address.');
+        e.preventDefault();
+        showFormMessage('error', 'Please enter a valid email address.');
         return;
     }
     
     // Phone validation (basic)
     const phoneRegex = /^[\d\s\-\+\(\)]+$/;
     if (!phoneRegex.test(phone)) {
-        alert('Please enter a valid phone number.');
+        e.preventDefault();
+        showFormMessage('error', 'Please enter a valid phone number.');
         return;
     }
     
-    // Here you would typically send the data to a server
-    // For now, we'll just show a success message
-    alert(`Thank you, ${name}! Your message has been received. We will contact you soon at ${email}.`);
+    // Show loading state
+    submitBtn.textContent = 'Sending...';
+    submitBtn.disabled = true;
     
-    // Reset form
-    contactForm.reset();
+    // Set redirect URL with form data
+    const currentUrl = window.location.href.split('#')[0].split('?')[0];
+    const thankYouUrl = currentUrl + '?submitted=true&name=' + encodeURIComponent(name) + '#contact';
+    contactForm.querySelector('input[name="_next"]').value = thankYouUrl;
+    
+    // Form will submit to FormSubmit service
+    // FormSubmit will send email to tayalchandigarh@gmail.com
+    // Then redirect back to our page with success message
 });
 
 // Intersection Observer for fade-in animations

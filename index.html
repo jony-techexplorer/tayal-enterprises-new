@@ -153,7 +153,12 @@
                     </div>
                 </div>
                 <div class="contact-form-container">
-                    <form id="contactForm" class="contact-form">
+                    <div id="formMessage" class="form-message" style="display: none;"></div>
+                    <form id="contactForm" class="contact-form" action="https://formsubmit.co/tayalchandigarh@gmail.com" method="POST">
+                        <input type="hidden" name="_subject" value="New Contact Form Submission - Tayal Enterprises">
+                        <input type="hidden" name="_captcha" value="false">
+                        <input type="hidden" name="_next" value="">
+                        <input type="hidden" name="_template" value="box">
                         <div class="form-group">
                             <input type="text" id="name" name="name" placeholder="Your Name" required>
                         </div>
