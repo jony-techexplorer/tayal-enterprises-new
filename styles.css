@@ -258,7 +258,8 @@ body {
     margin-bottom: 2rem;
     color: var(--secondary-color);
     position: relative;
-    display: inline-block;
+    display: block;
+    text-align: center;
 }
 
 .section-title::after {
